@@ -93,7 +93,7 @@ async def api_rhizome_detail(
 
 
 @router.put(
-    path='/modify-rhizome/v1',
+    path='/mod-rhizome/v1',
     description='修改作品',
     response_class=response_util.MallResponseClass
 )
@@ -135,7 +135,7 @@ async def api_rhizome_detail(
 
 
 @router.delete(
-    path='/delete-rhizome/v1',
+    path='/del-rhizome/v1',
     description='删除作品',
     response_class=response_util.MallResponseClass
 )

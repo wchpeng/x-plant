@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, Body
+import os
+from fastapi import APIRouter, Depends, Body, UploadFile, File
 from app.core import (
     router_util,
     response_util,
     dependencies,
     token_util,
+    pyutil
 )
 from app.models import (
     account as account_model
@@ -56,3 +58,18 @@ async def api_register_account(
         return response_util.MallResponse.info_err('用户名已注册')
     await account_model.User.create(username=username, password=password)
     return {}
+
+
+@router.post(
+    path='/account/upload/v1',
+    description="上传图片",
+    response_class=response_util.MallResponseClass
+)
+async def api_upload_image(file: UploadFile = File(None)):
+    filename = file.filename
+    suffix = filename.split('.')[-1]
+    new_name = pyutil.generate_alias()
+    with open(f'{os.path.join("data", "static", new_name)}.{suffix}', 'wb') as f:
+        f.write(await file.read())
+
+    return {'url': f'/static/{new_name}.{suffix}'}

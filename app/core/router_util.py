@@ -14,7 +14,7 @@ class LogRoute(APIRoute):
 
         async def custom_route_handler(request):
             request_body_bytes = await request.body()
-            request_body = request_body_bytes.decode() if len(request_body_bytes) < 100000 else ''
+            request_body = request_body_bytes.decode(errors='ignore') if len(request_body_bytes) < 100000 else ''
 
             request_scope = {
                 'method': request.scope['method'],

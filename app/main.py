@@ -3,31 +3,24 @@ from app.config.settings import setting
 from app.routers import register_router
 from starlette.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
+from fastapi.staticfiles import StaticFiles
 
 
 class Router:
     def db_for_read(self, model):
-        if hasattr(model.Meta, 'app'):
-            _app = getattr(model.Meta, 'app')
-            if _app == 'qiyewx_app':
-                return 'qiyewx_slave'
-            elif _app == 'mini_admin':
-                return 'mini_admin_slave'
         return "slave"
 
     def db_for_write(self, model):
-        if hasattr(model.Meta, 'app'):
-            _app = getattr(model.Meta, 'app')
-            if _app == 'qiyewx_app':
-                return 'qiyewx_master'
-            elif _app == 'mini_admin':
-                return 'mini_admin_master'
         return "master"
 
 
 def create_app():
     app = FastAPI()
 
+    app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+
+    # 静态文件
+    app.mount("/static", StaticFiles(directory="data/static"), name="static")
     register_tortoise(
         app=app,
         config={
@@ -53,8 +46,6 @@ def create_app():
 
     register_router(app)
 
-    app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
-
     return app
 
 
@@ -63,4 +54,4 @@ app = create_app()
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run('app.main:app', reload=True)
+    uvicorn.run('app.main:app', port=8080, reload=True)

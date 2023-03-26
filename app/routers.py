@@ -3,6 +3,6 @@ from app.views import account, rhizome as rhizome
 
 
 def register_router(app):
-    app.include_router(account.router, tags=['用户API'])
-    app.include_router(rhizome.router, tags=['植物根系'])
+    app.include_router(account.router, prefix='/api', tags=['用户API'])
+    app.include_router(rhizome.router, prefix='/api', tags=['植物根系'])
 
